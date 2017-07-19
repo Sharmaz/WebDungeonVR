@@ -16,11 +16,11 @@
       </a-assets>
       <a-entity id="jugador" camera universal-controls position="0 1.6 0" kinematic-body> 
         <a-cursor fuse="true" fuse-timeout="800"> </a-cursor>
+        <a-text id="score" value="Hola" width="4" color="black" font="mozillavr" position="0 -.5 -1" anchor="center" align="center"></a-text>
       </a-entity>
       <a-entity id="muros">
       </a-entity>
       <a-entity id="premios">
-        
       </a-entity>
       
       <a-sun-sky material="sunPosition: 300 50 0"></a-sun-sky>
@@ -46,6 +46,7 @@
       var muro, premio
       var muros = document.querySelector('#muros')
       var premios = document.querySelector('#premios')
+      var scoreEl = document.querySelector('#score')
 
       for (var x = 0; x < mapa.length; x++) {
           for (var y = 0; y < mapa[x].length; y++) {
@@ -83,6 +84,22 @@
               }
           }
       }
+      var arregloPremios = Array.from(document.querySelectorAll('.premio'))
+      var score = arregloPremios.length
+
+      scoreEl.setAttribute('value', 'Faltan ' + score + ' Para Ganar!')
+
+      arregloPremios.forEach(function(premio) {
+        premio.addEventListener('click', function() {
+          premio.setAttribute('visible', 'false')
+          score--
+          scoreEl.setAttribute('value', 'Faltan ' + score + ' Para Ganar!')
+
+          if (score <= 0) {
+            scoreEl.setAttribute('value', 'Ganaste!!')
+          }
+        })
+      })
 
 
     </script>
