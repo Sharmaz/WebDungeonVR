@@ -70,10 +70,16 @@
               }
               else if (mapa[x][y] == 2 ) {
                   //Jugador
-
+                  document.querySelector('#jugador').setAttribute('position', posicion)
               }
               else if (mapa[x][y] == 3 ) {
                   //Premio
+                  premio = document.createElement('a-sphere')
+                  premios.appendChild(premio)
+                  premio.setAttribute('position', posicion)
+                  premio.setAttribute('class', 'premio')
+                  premio.setAttribute('color', 'tomato')
+                  premio.setAttribute('radius', '1')   
               }
           }
       }
