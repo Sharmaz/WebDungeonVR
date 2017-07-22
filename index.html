@@ -5,44 +5,51 @@
     <title>Web Dungeon VR</title>
     <meta name="description" content="Hello, World! - A-Frame">
     <script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
-    <script src="//cdn.rawgit.com/donmccurdy/aframe-extras/v3.8.6/dist/aframe-extras.min.js"></script>
+    <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v3.8.6/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.rawgit.com/ngokevin/kframe/0d22a890/components/sun-sky/dist/aframe-sun-sky.min.js"></script>
   </head>
   <body>
     <a-scene>
       <a-assets>
-        <img src="assets/suelo.jpg" id="suelo">
+        <img src="assets/suelo2.jpg" id="suelo">
         <img src="assets/pared.jpg" id="pared">
+        <img src="assets/cursor.png" id="customCursor">
+        <a-asset-item id="llave" src="assets/key/devils-key.dae">
+        </a-asset-item>
       </a-assets>
-      <a-entity id="jugador" camera universal-controls position="0 1.6 0" kinematic-body> 
-        <a-cursor fuse="true" fuse-timeout="800"> </a-cursor>
+      <a-entity id="jugador" camera universal-controls position="0 1.6 0" rotation="0 90 0" kinematic-body> 
+        <a-cursor postion="0 0 -1" fuse="true" fuse-timeout="800"
+        geometry="primitive: ring; radiusOuter: 0.033; radiusInner: 0.020;"  material="color: #f6ce30; shader: flat"> </a-cursor>
         <a-text id="score" value="Hola" width="4" color="black" font="mozillavr" position="0 -.5 -1" anchor="center" align="center"></a-text>
       </a-entity>
       <a-entity id="muros">
       </a-entity>
       <a-entity id="premios">
       </a-entity>
-      
-      <a-sun-sky material="sunPosition: 300 50 0"></a-sun-sky>
+      <a-sun-sky material="sunPosition: 0 0 0"></a-sun-sky>
       <a-grid src="#suelo" static-body></a-grid>
+      <a-box position="0 4 -7.5" width="50" depth="50" height="0.2" material="src: #suelo; repeat: 50 50"></a-box>
+        
+      </a-entity>
+      <a-entity json-model="src: url(assets/devils-key-threejs/devils-key.json);"></a-entity>
     </a-scene>
     <script>
       
       var mapa = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 0, 0, 0, 0, 0, 0, 3, 1, 0, 0],
-        [1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0],
-        [1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0],
-        [1, 0, 0, 0, 3, 1, 1, 0, 1, 0, 0],
-        [0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0],
-        [0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0],
-        [0, 1, 3, 1, 1, 2, 1, 1, 1, 0, 0],
-        [0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0]
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0],
+        [1, 0, 0, 0, 1, 3, 0, 0, 0, 1, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0],
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+        [1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0],
+        [1, 0, 0, 0, 1, 1, 1, 1, 3, 1, 0],
+        [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+        [1, 3, 1, 0, 1, 2, 1, 3, 1, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]
       ]
 
       var tamanoPared = 5
-      var altoPared = 3
+      var altoPared = 4
       var muro, premio
       var muros = document.querySelector('#muros')
       var premios = document.querySelector('#premios')
@@ -61,7 +68,7 @@
                   muro = document.createElement('a-box')
                   muros.appendChild(muro)
                   muro.setAttribute('color', '#fff')
-                  muro.setAttribute('material', 'src: #pared')
+                  muro.setAttribute('material', 'src: #pared; repeat: 5 2.5;')
                   muro.setAttribute('width', tamanoPared)
                   muro.setAttribute('depth', tamanoPared)
                   muro.setAttribute('height', altoPared)
@@ -75,12 +82,21 @@
               }
               else if (mapa[x][y] == 3 ) {
                   //Premio
-                  premio = document.createElement('a-sphere')
+                  premio = document.createElement('a-entity')
+                  premioAnimation = document.createElement('a-animation')
                   premios.appendChild(premio)
                   premio.setAttribute('position', posicion)
                   premio.setAttribute('class', 'premio')
-                  premio.setAttribute('color', 'tomato')
-                  premio.setAttribute('radius', '1')   
+                  premio.setAttribute('collada-model', '#llave')
+                  premio.setAttribute('scale', '2 2 2')
+                  premio.appendChild(premioAnimation)
+                  
+                  premioAnimation.setAttribute('attribute', 'rotation')
+                  premioAnimation.setAttribute('from', '0 -30 0')
+                  premioAnimation.setAttribute('to', '0 330 0')
+                  premioAnimation.setAttribute('dur', '8000')
+                  premioAnimation.setAttribute('easing', 'linear')
+                  premioAnimation.setAttribute('repeat', 'indefinite')
               }
           }
       }
