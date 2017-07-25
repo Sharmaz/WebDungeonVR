@@ -14,8 +14,12 @@
       <a-assets>
         <img src="assets/suelo2.jpg" id="suelo">
         <img src="assets/pared.jpg" id="pared">
-        <img src="assets/WDVRLogo.png" id="logo">
-        <img src="assets/StartButton.png" id="startbutton">
+        <img src="assets/HUD_0.png" id="hud0">
+        <img src="assets/HUD_1.png" id="hud1">
+        <img src="assets/HUD_2.png" id="hud2">
+        <img src="assets/HUD_3.png" id="hud3">
+        <img src="assets/HUD_4.png" id="hud4">
+        <img src="assets/HUD_5.png" id="hud5">
         <a-asset-item id="llave" src="assets/key/devils-key.dae">
         </a-asset-item>
       </a-assets>
@@ -23,6 +27,7 @@
         <a-cursor postion="0 0 -1" fuse="true" fuse-timeout="800"
         geometry="primitive: ring; radiusOuter: 0.033; radiusInner: 0.020;"  material="color: #f6ce30; shader: flat"> </a-cursor>
         <a-text id="score" value="" width="4" color="black" font="mozillavr" position="0 -.5 -1" anchor="center" align="center"></a-text>
+        <a-image id="hud" src="#hud0" position="0 0.5 -0.8" width="2" height="0.1" visible="false"></a-image>
       </a-entity>
       <a-entity id="muros">
       </a-entity>
@@ -41,7 +46,7 @@
         [1, 0, 0, 0, 1, 3, 0, 0, 0, 1, 0],
         [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0],
         [1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
-        [1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0],
+        [1, 0, 1, 1, 3, 0, 0, 1, 0, 1, 0],
         [1, 0, 0, 0, 1, 1, 1, 1, 3, 1, 0],
         [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
         [1, 3, 1, 0, 1, 2, 1, 3, 1, 0, 0],
@@ -54,6 +59,7 @@
       var muros = document.querySelector('#muros')
       var premios = document.querySelector('#premios')
       var scoreEl = document.querySelector('#score')
+      var hud = document.querySelector('#hud')
 
       for (var x = 0; x < mapa.length; x++) {
           for (var y = 0; y < mapa[x].length; y++) {
@@ -102,29 +108,39 @@
       }
       var arregloPremios = Array.from(document.querySelectorAll('.premio'))
       var score = arregloPremios.length
+      var scoreToWin = 0
       
       document.querySelector('a-scene').addEventListener('enter-vr',
         function () {
+
+          hud.setAttribute('visible', 'true')
+
           scoreEl.setAttribute('value', 'Faltan ' + score + ' Para Ganar!')
 
           arregloPremios.forEach(function(premio) {
             premio.addEventListener('click', function() {
               premio.setAttribute('visible', 'false')
               score--
+              scoreToWin++
               scoreEl.setAttribute('value', 'Faltan ' + score + ' Para Ganar!')
 
               if (score <= 0) {
                 scoreEl.setAttribute('value', 'Ganaste!!')
               }
+              if (scoreToWin == 1) {
+                hud.setAttribute('src', '#hud1')
+              } else if (scoreToWin == 2) {
+                hud.setAttribute('src', '#hud2')
+              } else if (scoreToWin == 3) {
+                hud.setAttribute('src', '#hud3')
+              } else if (scoreToWin == 4) {
+                hud.setAttribute('src', '#hud4')
+              } else if (scoreToWin == 5) {
+                hud.setAttribute('src', '#hud5')
+              }
             })
           })
         })
-      
-
-      function startDungeon() {
-        splash = querySelector('#splash')
-        splash.setAttribute('hidden', 'true')
-      }
     </script>
   </body>
 </html>
