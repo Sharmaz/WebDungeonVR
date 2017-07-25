@@ -20,6 +20,8 @@
         <img src="assets/HUD_3.png" id="hud3">
         <img src="assets/HUD_4.png" id="hud4">
         <img src="assets/HUD_5.png" id="hud5">
+        <img src="assets/Objective.png" id="objective">
+        <img src="assets/Win.png" id="winner">
         <a-asset-item id="llave" src="assets/key/devils-key.dae">
         </a-asset-item>
       </a-assets>
@@ -28,6 +30,8 @@
         geometry="primitive: ring; radiusOuter: 0.033; radiusInner: 0.020;"  material="color: #f6ce30; shader: flat"> </a-cursor>
         <a-text id="score" value="" width="4" color="black" font="mozillavr" position="0 -.5 -1" anchor="center" align="center"></a-text>
         <a-image id="hud" src="#hud0" position="0 0.5 -0.8" width="2" height="0.1" visible="false"></a-image>
+        <a-image id="mission" src="#objective" position="0 0 -0.8" width="2" height="0.24" visible="false"></a-image>
+        <a-image id="win" src="#winner" position="0 0 -0.8" width="1" height="0.24" visible="false"></a-image>
       </a-entity>
       <a-entity id="muros">
       </a-entity>
@@ -58,8 +62,9 @@
       var muro, premio
       var muros = document.querySelector('#muros')
       var premios = document.querySelector('#premios')
-      var scoreEl = document.querySelector('#score')
       var hud = document.querySelector('#hud')
+      var mission = document.querySelector('#mission')
+      var win = document.querySelector('#win')
 
       for (var x = 0; x < mapa.length; x++) {
           for (var y = 0; y < mapa[x].length; y++) {
@@ -109,23 +114,35 @@
       var arregloPremios = Array.from(document.querySelectorAll('.premio'))
       var score = arregloPremios.length
       var scoreToWin = 0
+
+      document.querySelector('a-scene').addEventListener('exit-vr', function () {
+        hud.setAttribute('visible', 'false')
+        mission.setAttribute('visible', 'false')
+        win.setAttribute('visible', 'false')
+      })
+        
       
       document.querySelector('a-scene').addEventListener('enter-vr',
         function () {
 
           hud.setAttribute('visible', 'true')
+          mission.setAttribute('visible', 'true')
 
-          scoreEl.setAttribute('value', 'Faltan ' + score + ' Para Ganar!')
+          setTimeout(function(){ mission.setAttribute('visible', 'false') }, 5000)
 
           arregloPremios.forEach(function(premio) {
             premio.addEventListener('click', function() {
               premio.setAttribute('visible', 'false')
               score--
               scoreToWin++
-              scoreEl.setAttribute('value', 'Faltan ' + score + ' Para Ganar!')
 
               if (score <= 0) {
-                scoreEl.setAttribute('value', 'Ganaste!!')
+                win.setAttribute('visible', 'true')
+                setTimeout(function(){ document.querySelector('a-scene').exitVR()
+                  ;}, 5000)
+                setTimeout(function(){ 
+                  window.location.href = '/';
+                  }, 6000)
               }
               if (scoreToWin == 1) {
                 hud.setAttribute('src', '#hud1')
