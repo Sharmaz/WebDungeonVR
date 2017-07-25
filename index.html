@@ -4,23 +4,25 @@
     <meta charset="utf-8">
     <title>Web Dungeon VR</title>
     <meta name="description" content="Hello, World! - A-Frame">
-    <script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/0.6.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v3.8.6/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.rawgit.com/ngokevin/kframe/0d22a890/components/sun-sky/dist/aframe-sun-sky.min.js"></script>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <a-scene>
+    <a-scene fog="type: exponential; color: #2A324C; density: 0.4;">
       <a-assets>
         <img src="assets/suelo2.jpg" id="suelo">
         <img src="assets/pared.jpg" id="pared">
-        <img src="assets/cursor.png" id="customCursor">
+        <img src="assets/WDVRLogo.png" id="logo">
+        <img src="assets/StartButton.png" id="startbutton">
         <a-asset-item id="llave" src="assets/key/devils-key.dae">
         </a-asset-item>
       </a-assets>
       <a-entity id="jugador" camera universal-controls position="0 1.6 0" rotation="0 90 0" kinematic-body> 
         <a-cursor postion="0 0 -1" fuse="true" fuse-timeout="800"
         geometry="primitive: ring; radiusOuter: 0.033; radiusInner: 0.020;"  material="color: #f6ce30; shader: flat"> </a-cursor>
-        <a-text id="score" value="Hola" width="4" color="black" font="mozillavr" position="0 -.5 -1" anchor="center" align="center"></a-text>
+        <a-text id="score" value="" width="4" color="black" font="mozillavr" position="0 -.5 -1" anchor="center" align="center"></a-text>
       </a-entity>
       <a-entity id="muros">
       </a-entity>
@@ -30,11 +32,9 @@
       <a-grid src="#suelo" static-body></a-grid>
       <a-box position="0 4 -7.5" width="50" depth="50" height="0.2" material="src: #suelo; repeat: 50 50"></a-box>
         
-      </a-entity>
-      <a-entity json-model="src: url(assets/devils-key-threejs/devils-key.json);"></a-entity>
     </a-scene>
     <script>
-      
+
       var mapa = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0],
@@ -102,22 +102,29 @@
       }
       var arregloPremios = Array.from(document.querySelectorAll('.premio'))
       var score = arregloPremios.length
-
-      scoreEl.setAttribute('value', 'Faltan ' + score + ' Para Ganar!')
-
-      arregloPremios.forEach(function(premio) {
-        premio.addEventListener('click', function() {
-          premio.setAttribute('visible', 'false')
-          score--
+      
+      document.querySelector('a-scene').addEventListener('enter-vr',
+        function () {
           scoreEl.setAttribute('value', 'Faltan ' + score + ' Para Ganar!')
 
-          if (score <= 0) {
-            scoreEl.setAttribute('value', 'Ganaste!!')
-          }
+          arregloPremios.forEach(function(premio) {
+            premio.addEventListener('click', function() {
+              premio.setAttribute('visible', 'false')
+              score--
+              scoreEl.setAttribute('value', 'Faltan ' + score + ' Para Ganar!')
+
+              if (score <= 0) {
+                scoreEl.setAttribute('value', 'Ganaste!!')
+              }
+            })
+          })
         })
-      })
+      
 
-
+      function startDungeon() {
+        splash = querySelector('#splash')
+        splash.setAttribute('hidden', 'true')
+      }
     </script>
   </body>
 </html>
