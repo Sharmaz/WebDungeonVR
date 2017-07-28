@@ -1,7 +1,8 @@
 {
-  "name": "aframe-hello-world-boilerplate",
-  "description": "Boilerplate with A-Frame's 'Hello, World!' of WebVR.",
-  "version": "0.3.0",
+  "name": "web-dungeon-vr",
+  "description": "VR Experience using WebVR with A-Frame",
+  "version": "0.1.0",
+  "author": "Ivan Robles <irae45@gmail.com>",
   "license": "MIT",
   "scripts": {
     "start": "budo --live --verbose --port 3000 --open",
