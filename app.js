@@ -117,7 +117,7 @@ document.querySelector('a-scene').addEventListener('enter-vr',
           setTimeout(function(){ document.querySelector('a-scene').exitVR()
             ;}, 5000)
           setTimeout(function(){ 
-            window.location.href = '/';
+            window.location.href = '/WebDungeonVR';
             }, 6000)
         }
       })
