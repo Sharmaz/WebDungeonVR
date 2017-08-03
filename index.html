@@ -21,11 +21,11 @@
         <img src="assets/HUD_5.png" id="hud5">
         <img src="assets/Objective.png" id="objective">
         <img src="assets/Win.png" id="winner">
-        <audio src="assets/Key.mp3" id="soundKey"></audio>
-        <audio src="assets/Step.wav" id="soundStep"></audio>
-        <audio src="assets/Gathering_Darkness.mp3" id="soundAmbient"></audio>
         <a-asset-item id="llave" src="assets/key/devils-key.dae">
         </a-asset-item>
+        <audio src="assets/Key.mp3" id="soundKey"></audio>
+        <audio src="assets/Step.wav" id="soundStep"></audio>
+        <audio src="assets/Gathering_Darkness.mp3" id="soundAmbient" autoplay=""></audio>
       </a-assets>
       <a-entity id="jugador" camera universal-controls position="0 1.6 0" rotation="0 90 0" kinematic-body> 
         <a-cursor postion="0 0 -1" fuse="true" fuse-timeout="800"
@@ -43,7 +43,7 @@
       <a-entity id="premios">
       </a-entity>
       <a-grid src="#suelo" static-body></a-grid>
-      <a-box position="0 4 -7.5" width="60" depth="60" height="0.2" material="src: #suelo; repeat: 60 60"></a-box>    
+      <a-box position="0 4 -7.5" width="60" depth="60" height="0.2" material="src: #suelo; repeat: 60 60"></a-box>
     </a-scene>
     <script src="app.js">
     </script>

@@ -1,3 +1,5 @@
+/* El mapa es una matriz, depende de el numero es el objeto que vamos a insertar */
+
 var mapa = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   [1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0],
@@ -34,7 +36,7 @@ for (var x = 0; x < mapa.length; x++) {
             continue
         } 
         else if (mapa[x][y] == 1) {
-            //Pared
+            // Pared
             muro = document.createElement('a-box')
             muros.appendChild(muro)
             muro.setAttribute('color', '#fff')
@@ -47,61 +49,109 @@ for (var x = 0; x < mapa.length; x++) {
 
         }
         else if (mapa[x][y] == 2 ) {
-            //Jugador
+            // Jugador
             document.querySelector('#jugador').setAttribute('position', posicion)
         }
         else if (mapa[x][y] == 3 ) {
-            //Premio
+            // Premio
             premio = document.createElement('a-entity')
             premioAnimation = document.createElement('a-animation')
+            premioCollada = document.createElement('a-collada-model')
+            premioAll = document.querySelectorAll('premio')
+            
             premios.appendChild(premio)
             premio.setAttribute('position', posicion)
             premio.setAttribute('class', 'premio')
-            premio.setAttribute('collada-model', '#llave')
-            premio.setAttribute('scale', '2 2 2')
-            premio.appendChild(premioAnimation)
             
-            premioAnimation.setAttribute('attribute', 'rotation')
-            premioAnimation.setAttribute('from', '0 -30 0')
-            premioAnimation.setAttribute('to', '0 330 0')
-            premioAnimation.setAttribute('dur', '8000')
-            premioAnimation.setAttribute('easing', 'linear')
-            premioAnimation.setAttribute('repeat', 'indefinite')
+            /* Por alguna razón los modelos 3D desaparecen en chrome al agregar a-animation */
+
+            if (navigator.userAgent.search("Firefox") >= 0) {
+
+              // Si estamos en Firefox agregamos animación
+
+              premio.appendChild(premioAnimation)
+            
+              premioAnimation.setAttribute('attribute', 'rotation')
+              premioAnimation.setAttribute('from', '0 -30 0')
+              premioAnimation.setAttribute('to', '0 330 0')
+              premioAnimation.setAttribute('dur', '8000')
+              premioAnimation.setAttribute('easing', 'linear')
+              premioAnimation.setAttribute('repeat', 'indefinite')
+            } else {
+              // Si estamos en cualquier otro navegador
+              
+              document.querySelector('#llave').addEventListener('loaded', function() {
+                // Cuando el asset este cargado agregamos a el primer elemento Premio a-animation
+
+                arregloPremios[0].appendChild(premioAnimation)
+              
+                premioAnimation.setAttribute('attribute', 'rotation')
+                premioAnimation.setAttribute('from', '0 -30 0')
+                premioAnimation.setAttribute('to', '0 330 0')
+                premioAnimation.setAttribute('dur', '8000')
+                premioAnimation.setAttribute('easing', 'linear')
+                premioAnimation.setAttribute('repeat', 'indefinite')
+              })
+            }
+
+            premio.appendChild(premioCollada)
+
+            premioCollada.setAttribute('rotation', '0 -90 0')
+            premioCollada.setAttribute('scale', '2 2 2')
+            premioCollada.setAttribute('src', '#llave')
+
+
         }
     }
 }
+
 var arregloPremios = Array.from(document.querySelectorAll('.premio'))
 var scoreToWin = 0
 
 document.querySelector('a-scene').addEventListener('exit-vr', function () {
+  // Escondemos o Mostramos al entrar y salir del modo VR algunos graficos
+  
   hud.setAttribute('visible', 'false')
   mission.setAttribute('visible', 'false')
   win.setAttribute('visible', 'false')
-  //sceneWASD.setAttribute('wasd-controls', 'enable: false')
+  
+  // Activar y Desactivar los controles WASD al entrar y salir en modo vr trae issues
+  // sceneWASD.setAttribute('wasd-controls', 'enable: false')
 
   document.onkeydown = function(e) {
-      if (e.keyCode == 65 || e.keyCode == 87 || e.keyCode == 68 || e.keyCode == 83) {
+    // Fuera del modo vr denemos el sonido de los pasos si usamos WASD
+    
+    if (e.keyCode == 65 || e.keyCode == 87 || e.keyCode == 68 || e.keyCode == 83) {
           stepSound.components.sound.stopSound()
-      }
     }
+  }
 })
-  
 
 document.querySelector('a-scene').addEventListener('enter-vr',
   function () {
-
+    // Activar y Desactivar los controles WASD al entrar y salir en modo vr trae issues
     //sceneWASD.removeAttribute('wasd-controls')
+
+    // Escondemos o Mostramos al entrar y salir del modo VR algunos graficos
+    
     hud.setAttribute('visible', 'true')
     mission.setAttribute('visible', 'true')
 
     setTimeout(function(){ mission.setAttribute('visible', 'false') }, 5000)
 
+    // Evento click para recoger las llaves
+
     arregloPremios.forEach(function(premio) {
       premio.addEventListener('click', function() {
         premio.setAttribute('visible', 'false')
         scoreToWin++
+
+        // Cada vez que recogemos una llave escucharemos un sonido
+
         keySound.components.sound.playSound()
 
+
+        // Cambiamos el grafico del HUD para indicar cuantas llaves tenemos
         if (scoreToWin == 1) {
           hud.setAttribute('src', '#hud1')
         } else if (scoreToWin == 2) {
@@ -113,15 +163,23 @@ document.querySelector('a-scene').addEventListener('enter-vr',
         } else if (scoreToWin == 5) {
           hud.setAttribute('src', '#hud5')
 
+          // Una vez recogemos todas las laves mostramos el grafico Win
+
           win.setAttribute('visible', 'true')
-          setTimeout(function(){ document.querySelector('a-scene').exitVR()
-            ;}, 5000)
           setTimeout(function(){ 
+            // 5 segundos despues de ganar salimos del modo vr
+            document.querySelector('a-scene').exitVR()
+            ;}, 5000)
+          setTimeout(function(){
+            // 6 segundos despues de salir de modo vr recargamos navegador
             window.location.href = '/WebDungeonVR';
             }, 6000)
         }
       })
     })
+
+    // Reproducimos el sonido de paso cada vez que nos movemos con las teclas WASD
+
     document.onkeydown = function(e) {
       if (e.keyCode == 65 || e.keyCode == 87 || e.keyCode == 68 || e.keyCode == 83) {
           stepSound.components.sound.playSound()
